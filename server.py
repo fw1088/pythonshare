@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*-
 import socket
+import time
 
 hint = '''本例子演示了基本的socket操作
 不过有个缺陷，为了保持长连接
@@ -8,9 +9,10 @@ hint = '''本例子演示了基本的socket操作
 多个客户端，需要使用多线程和多进程模型
 或者使用epoll,select,poll模型
 '''
+
 HOST = '127.0.0.1'
 PORT = 8001
-
+TIMEFORMAT='%Y-%m-%d %X'
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
 s.listen(5)
@@ -30,7 +32,7 @@ while True:
     while True:   
  	data = conn.recv(1024)
     	if data != "null":
-            print data
+			print time.strftime(TIMEFORMAT,time.localtime()),'\n\r',data
 	if data ==  "exit":
 	    conn.send("exit")
 	    break	
