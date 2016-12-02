@@ -1,13 +1,13 @@
 import select
 import socket
 import Queue
-
+import time
 server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 server.setblocking(False)
 server.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 server_address = ('127.0.0.1',8888)
 server.bind(server_address)
-server.listen(5)
+server.listen(20)
 
 inputs = [server]
 
@@ -31,13 +31,19 @@ while inputs:
             inputs.append(connection)
             message_queues[connection] = Queue.Queue()
         else:
-            data = s.recv(1024)
-            if data:
-                print data,client_address
-		print "\n\r"
-                message_queues[s].put(data)
-                if s not in outputs:
-                    outputs.append(s)
+            try:
+                data = s.recv(1024)
+                if data:
+                    print data
+                    message_queues[s].put(data)
+                    if s not in outputs:
+                        outputs.append(s)
+            except socket.error,e:
+                    if s in outputs:
+                        outputs.remove(s)
+                    if s in inputs:
+                        inputs.remove(s)
+                    s.close()
                 #print "closing",client_address
                 #if s in outputs:
                    # outputs.remove(s)
@@ -47,8 +53,15 @@ while inputs:
     for s in writable:
         if message_queues[s].empty() == False:
             next_msg = message_queues[s].get_nowait()
-            #print "sending",next_msg,"to",s.getpeername()
-            s.send(next_msg)
+            #print "sending",next_msg,"to",s.getpeername()   
+            try:
+                s.send(next_msg)
+            except socket.error,e:
+                if s in outputs:
+                    outputs.remove(s)
+                if s in inputs:
+                    inputs.remove(s)
+                s.close()
     for s in exceptional:
         print "exception condition on",s.getpeername()
         inputs.remove(s)
