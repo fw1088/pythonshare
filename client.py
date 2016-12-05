@@ -3,7 +3,7 @@
 #-*- coding:utf-8 -*-
 import socket
 HOST = '127.0.0.1'
-PORT = 8888
+PORT = 8001
 
 while True:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
