@@ -4,7 +4,7 @@ ___author___= "fangwei"
 import socket
 import time
 import threading
-
+from parser import *
 hint = '''本例子演示了基本的socket操作
 不过有个缺陷，为了保持长连接
 只能处理一个客户端，如果要处理
@@ -22,7 +22,8 @@ def threadServer(conn,addr):
             conn.send("exit")
             break
         try:
-            conn.send("server received you message.")
+            parsestr = parse(data)
+            conn.send(parsestr)
         except socket.error, e:
 			conn.close()
 			break

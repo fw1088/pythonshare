@@ -2,7 +2,7 @@
 # -*-coding:utf-8 -*-
 import socket
 import time
-
+from parser import *
 hint = '''本例子演示了基本的socket操作
 不过有个缺陷，为了保持长连接
 只能处理一个客户端，如果要处理
@@ -29,21 +29,23 @@ while True:
     result = 0
     conn, addr = s.accept()
     print 'Connected by ', addr
-    while True:   
- 	data = conn.recv(1024)
-    	if data != "null":
-			print time.strftime(TIMEFORMAT,time.localtime()),'\n\r',data
-	if data ==  "exit":
-	    conn.send("exit")
-	    break	
+    while True:
+        result = 0
+        data = conn.recv(1024)
+        if data != "null":
+		    print time.strftime(TIMEFORMAT,time.localtime()),'\n\r',data
+        if data ==  "exit":
+	        conn.send("exit")
+	        break	
         try:
-            conn.send("server received you message.")
+            parsedata = parse(data)
+            conn.send(parsedata)
         except socket.error, e:
-	    result = 1
-	    break
-    if result == 1:
-	continue
-    else:
-	print 'I will leave,bye'
-	break
+	        result = 1
+	        break
+        if result == 0:
+	        continue
+        else:
+	        print 'I will leave,bye'
+    break
 conn.close()
