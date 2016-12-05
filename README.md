@@ -8,5 +8,10 @@
 
 socket对tcp／ip协议进行了抽象，使得我们可以只是才做api，而不用处理具体的细节
 
+
+其它内容：
+python 连接redis
+python 使用flask和任务队列
+
 ps:编写python的时候空格键和tab键最好不要混用
 因为python是依靠缩进识别各个语句的
